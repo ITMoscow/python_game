@@ -152,7 +152,7 @@ def buy(price, gold, quantity=1):
     return gold, False
 
 
-menu_last = 10
+menu_last = 11
 running = True
 actions = 0
 outcome = "interrupt"
@@ -169,6 +169,7 @@ try:
         print("8 - leaderboard")
         print("9 - shop")
         print("10 - backpack")
+        print("11 - drink potion")
         print("0 - exit the dungeon")
 
         while True:
@@ -286,6 +287,16 @@ try:
                     for name, qty in inventory.items():
                         print(f"{name}: {qty} pcs")
 
+            case "11":
+                if inventory.get("potion", 0) == 0:
+                    print("No potions in the backpack.")
+                else:
+                    health = min(health + 10, max_health)
+                    inventory["potion"] -= 1
+                    if inventory["potion"] == 0:
+                        del inventory["potion"]
+                    print(f"You drink a potion. Health: {health}. Potions left: {inventory.get('potion', 0)}.")
+
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
                 outcome = "exit"
@@ -307,6 +318,12 @@ except KeyboardInterrupt:
     print()
     print("The player ended the session.")
 finally:
+    if inventory:
+        print("Left behind in the backpack:")
+        for name, qty in inventory.items():
+            print(f"{name}: {qty} pcs")
+    else:
+        print("Left behind in the backpack: nothing.")
     print(frame)
     if outcome == "death":
         print(f"You didn't make it, {hero_name}. Actions: {actions}.")
