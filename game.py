@@ -1,3 +1,5 @@
+import random
+
 title = "DUNGEON: THE SILENT WELL"
 frame = "=" * 31
 
@@ -46,6 +48,9 @@ print(f"Hero damage: {damage:.1f}")
 print(f"Critical damage: {crit_damage:.1f}")
 print(f"Stamina reserve: {stamina}")
 print()
+
+enemies = ["ghoul", "skeleton", "spider", "bat"]
+log = []
 
 menu_last = 6
 running = True
