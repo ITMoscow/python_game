@@ -171,7 +171,7 @@ num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
 
 commands = ["look", "go", "rest", "listen", "torch", "train", "descend",
             "leaders", "shop", "backpack", "drink potion",
-            "buy <item> [count]", "exit"]
+            "buy <item> [count]", "go <north|south|west|east>", "map", "exit"]
 MENU = ["What do you do? (number or command; help for help)",
         "1 - look around (look)",
         "2 - go forward (go)",
@@ -184,6 +184,7 @@ MENU = ["What do you do? (number or command; help for help)",
         "9 - shop (shop)",
         "10 - backpack (backpack)",
         "11 - drink potion (drink)",
+        "map - dungeon map",
         "0 - exit the dungeon (exit)"]
 
 running = True
@@ -330,6 +331,15 @@ try:
                     if inventory[item] == 0:
                         del inventory[item]
                     print(f"You drink a {item}. Health: {health}. Potions left: {inventory.get(item, 0)}.")
+
+            case "map":
+                print("Map:")
+                for i in range(len(MAP)):
+                    cells = []
+                    for j in range(len(MAP[i])):
+                        cell = "@" if (i, j) == (hero_r, hero_c) else MAP[i][j]
+                        cells.append(cell)
+                    print(" ".join(cells))
 
             case "help":
                 print("Commands: " + ", ".join(commands) + ".")
