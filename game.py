@@ -400,11 +400,14 @@ try:
 
         if health <= 0:
             print(f"{hero_name} falls. The dungeon claims another seeker.")
+            if os.path.exists("save.json"):
+                os.remove("save.json")
             outcome = "death"
             running = False
 except KeyboardInterrupt:
     print()
     print("The player ended the session.")
+    write_save()
 finally:
     if inventory:
         print("Left behind in the backpack:")
