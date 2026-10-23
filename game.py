@@ -46,7 +46,11 @@ while running:
     print("6 - тренировка")
     print("0 - выйти из подземелья")
 
+    valid = ("0", "1", "2", "3", "4", "5", "6")
     choice = input()
+    while choice not in valid:
+        print("Такого пункта нет. Введи номер пункта из меню.")
+        choice = input()
     match choice:
         case "1":
             print("Вы осмотрелись. Комната пуста, только пыль на полу.")
