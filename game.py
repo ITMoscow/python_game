@@ -50,94 +50,103 @@ print()
 menu_last = 6
 running = True
 actions = 0
-while running:
-    print("Что делаешь?")
-    print("1 - осмотреться")
-    print("2 - идти вперёд")
-    print("3 - отдохнуть")
-    print("4 - прислушаться")
-    print("5 - зажечь факел")
-    print("6 - тренировка")
-    print("0 - выйти из подземелья")
+outcome = "прерывание"
+try:
+    while running:
+        print("Что делаешь?")
+        print("1 - осмотреться")
+        print("2 - идти вперёд")
+        print("3 - отдохнуть")
+        print("4 - прислушаться")
+        print("5 - зажечь факел")
+        print("6 - тренировка")
+        print("0 - выйти из подземелья")
 
-    while True:
-        choice = input()
-        try:
-            menu_number = int(choice)
-        except ValueError:
+        while True:
+            choice = input()
+            try:
+                menu_number = int(choice)
+            except ValueError:
+                print("Такого пункта нет. Введи номер пункта из меню.")
+                continue
+            if 0 <= menu_number <= menu_last:
+                break
             print("Такого пункта нет. Введи номер пункта из меню.")
-            continue
-        if 0 <= menu_number <= menu_last:
-            break
-        print("Такого пункта нет. Введи номер пункта из меню.")
-    choice = str(menu_number)
-    match choice:
-        case "1":
-            print("Вы осмотрелись. Комната пуста, только пыль на полу.")
+        choice = str(menu_number)
+        match choice:
+            case "1":
+                print("Вы осмотрелись. Комната пуста, только пыль на полу.")
 
-        case "2":
-            cost = 2
-            if stamina >= cost:
-                stamina -= cost
-                print("Вы осторожно идёте вперёд. Пол скрипит под ногами.")
-            else:
-                health -= cost - stamina
-                stamina = 0
-                print("Сил больше нет — вы идёте на одном упорстве.")
-
-        case "3":
-            stamina = stamina + 3
-            print("Вы садитесь на пол и переводите дух. Силы возвращаются.")
-
-        case "4":
-            print("Вы прислушиваетесь. Где-то далеко капает вода.")
-
-        case "5":
-            stamina = stamina - 1
-            print("Вы зажигаете факел. На стенах проступают старые надписи.")
-
-        case "6":
-            strikes = 5
-            total_damage = 0
-            crit_count = 0
-            print("Вы подходите к тренировочному чучелу.")
-            print("Оно стоит здесь с тех пор, как сюда приходил последний искатель.")
-            print()
-            print(f"Наносите {strikes} ударов.")
-            for i in range(1, strikes + 1):
-                hit_damage = damage
-                if i % 3 == 0:
-                    hit_damage = crit_damage
-                    crit_count += 1
-                    print(f"Удар {i}: {hit_damage:.1f} — критический!")
+            case "2":
+                cost = 2
+                if stamina >= cost:
+                    stamina -= cost
+                    print("Вы осторожно идёте вперёд. Пол скрипит под ногами.")
                 else:
-                    print(f"Удар {i}: {hit_damage:.1f}")
-                total_damage += hit_damage
-            stamina = stamina - 1
+                    health -= cost - stamina
+                    stamina = 0
+                    print("Сил больше нет — вы идёте на одном упорстве.")
+
+            case "3":
+                stamina = stamina + 3
+                print("Вы садитесь на пол и переводите дух. Силы возвращаются.")
+
+            case "4":
+                print("Вы прислушиваетесь. Где-то далеко капает вода.")
+
+            case "5":
+                stamina = stamina - 1
+                print("Вы зажигаете факел. На стенах проступают старые надписи.")
+
+            case "6":
+                strikes = 5
+                total_damage = 0
+                crit_count = 0
+                print("Вы подходите к тренировочному чучелу.")
+                print("Оно стоит здесь с тех пор, как сюда приходил последний искатель.")
+                print()
+                print(f"Наносите {strikes} ударов.")
+                for i in range(1, strikes + 1):
+                    hit_damage = damage
+                    if i % 3 == 0:
+                        hit_damage = crit_damage
+                        crit_count += 1
+                        print(f"Удар {i}: {hit_damage:.1f} — критический!")
+                    else:
+                        print(f"Удар {i}: {hit_damage:.1f}")
+                    total_damage += hit_damage
+                stamina = stamina - 1
+                print()
+                print(f"Итог: {strikes} ударов, {crit_count} критический.")
+                print(f"Общий урон: {total_damage:.1f}")
+                print(f"Средний урон: {total_damage / strikes:.1f}")
+
+            case "0":
+                print("Вы поднимаетесь обратно к свету. Подземелье остаётся позади.")
+                outcome = "выход"
+                running = False
+
+            case _:
+                print("Такого действия нет.")
+
+        if running:
+            actions += 1
             print()
-            print(f"Итог: {strikes} ударов, {crit_count} критический.")
-            print(f"Общий урон: {total_damage:.1f}")
-            print(f"Средний урон: {total_damage / strikes:.1f}")
+            print(f"Здоровье: {health} Запас сил: {stamina}")
 
-        case "0":
-            print("Вы поднимаетесь обратно к свету. Подземелье остаётся позади.")
+        if health <= 0:
+            print(f"{hero_name} падает без сил. Подземелье забирает ещё одного искателя.")
+            outcome = "гибель"
             running = False
-
-        case _:
-            print("Такого действия нет.")
-
-    if running:
-        actions += 1
-        print()
-        print(f"Здоровье: {health} Запас сил: {stamina}")
-
-    if health <= 0:
-        print(f"{hero_name} падает без сил. Подземелье забирает ещё одного искателя.")
-        running = False
-
-print(frame)
-if health <= 0:
-    print(f"Ты не дошёл, {hero_name}. Действий совершено: {actions}.")
-else:
-    print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
-print(frame)
+except KeyboardInterrupt:
+    print()
+    print("Игрок прервал сеанс.")
+finally:
+    print(frame)
+    if outcome == "гибель":
+        print(f"Ты не дошёл, {hero_name}. Действий совершено: {actions}.")
+    elif outcome == "выход":
+        print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
+    else:
+        print(f"Сеанс прерван, {hero_name}. Действий совершено: {actions}.")
+    print(frame)
