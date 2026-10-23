@@ -196,7 +196,7 @@ num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
 
 commands = ["look", "go", "rest", "listen", "torch", "train", "descend",
             "leaders", "shop", "backpack", "drink potion",
-            "buy <item> [count]", "go <north|south|west|east>", "map", "scout", "exit"]
+            "buy <item> [count]", "go <north|south|west|east>", "map", "scout", "newgame", "exit"]
 MENU = ["What do you do? (number or command; help for help)",
         "1 - look around (look)",
         "2 - go forward (go)",
@@ -211,6 +211,7 @@ MENU = ["What do you do? (number or command; help for help)",
         "11 - drink potion (drink)",
         "map - dungeon map",
         "scout - count reachable rooms",
+        "newgame - delete the save",
         "0 - exit the dungeon (exit)"]
 
 running = True
@@ -373,6 +374,14 @@ try:
             case "scout":
                 seen = set()
                 print(f"Scout: {scout(hero_r, hero_c, seen)} rooms reachable.")
+
+            case "newgame":
+                if os.path.exists("save.json"):
+                    os.remove("save.json")
+                    print("Save destroyed. The next run starts fresh.")
+                else:
+                    print("No save to destroy.")
+                continue
 
             case "help":
                 print("Commands: " + ", ".join(commands) + ".")
