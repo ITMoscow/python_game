@@ -52,8 +52,14 @@ while running:
             print("Вы осмотрелись. Комната пуста, только пыль на полу.")
 
         case "2":
-            stamina = stamina - 2
-            print("Вы осторожно идёте вперёд. Пол скрипит под ногами.")
+            cost = 2
+            if stamina >= cost:
+                stamina -= cost
+                print("Вы осторожно идёте вперёд. Пол скрипит под ногами.")
+            else:
+                health -= cost - stamina
+                stamina = 0
+                print("Сил больше нет — вы идёте на одном упорстве.")
 
         case "3":
             stamina = stamina + 3
@@ -101,6 +107,13 @@ while running:
         print()
         print(f"Здоровье: {health} Запас сил: {stamina}")
 
+    if health <= 0:
+        print(f"{hero_name} падает без сил. Подземелье забирает ещё одного искателя.")
+        running = False
+
 print(frame)
-print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
+if health <= 0:
+    print(f"Ты не дошёл, {hero_name}. Действий совершено: {actions}.")
+else:
+    print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
 print(frame)
