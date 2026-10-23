@@ -74,3 +74,8 @@ def buy(price, gold, quantity=1):
     if gold >= cost:
         return gold - cost, True
     return gold, False
+
+
+if __name__ == "__main__":
+    rounds, won, hp, loot = fight("skeleton", 100, 0, 20.5, 41.0)
+    print(f"self-test: {len(rounds)} rounds, won={won}, loot={loot}")
