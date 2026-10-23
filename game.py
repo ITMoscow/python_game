@@ -94,6 +94,33 @@ def fight(enemy, hero_health):
     return rounds, enemy_hp <= 0, hero_health
 
 
+def print_leaderboard(log):
+    """Печатает топ-3 раундов по урону героя и рекорд врага.
+    Возвращает None: контракт функции — печать, а не данные.
+    """
+    if not log:
+        print("You haven't fought yet.")
+        return
+    top = sorted(log, key=lambda r: r[1], reverse=True)[:3]
+    print("Leaderboard (hero damage):")
+    for i in range(len(top)):
+        print(f"{i + 1}. Round {top[i][0]}: {top[i][1]:.1f}")
+    worst = max(log, key=lambda r: r[2])
+    print(f"Strongest enemy hit: {worst[2]} (round {worst[0]}).")
+
+
+def print_run_summary(log):
+    """Печатает итог забега: суммарный и средний урон героя.
+    Возвращает None. Безопасна на пустом журнале.
+    """
+    total = sum(r[1] for r in log)
+    rounds = len(log)
+    if rounds > 0:
+        print(f"Damage: {total:.1f} across {rounds} rounds, average {total / rounds:.1f}.")
+    else:
+        print("No battles this run.")
+
+
 menu_last = 8
 running = True
 actions = 0
@@ -184,15 +211,7 @@ try:
                     print(f"Battle: {len(rounds)} rounds.")
 
             case "8":
-                if not log:
-                    print("You haven't fought yet.")
-                else:
-                    top = sorted(log, key=lambda r: r[1], reverse=True)[:3]
-                    print("Leaderboard (hero damage):")
-                    for i in range(len(top)):
-                        print(f"{i + 1}. Round {top[i][0]}: {top[i][1]:.1f}")
-                    worst = max(log, key=lambda r: r[2])
-                    print(f"Strongest enemy hit: {worst[2]} (round {worst[0]}).")
+                print_leaderboard(log)
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
@@ -222,10 +241,5 @@ finally:
         print(f"Run over, {hero_name}. Actions: {actions}.")
     else:
         print(f"Session interrupted, {hero_name}. Actions: {actions}.")
-    total = sum(r[1] for r in log)
-    rounds = len(log)
-    if rounds > 0:
-        print(f"Damage: {total:.1f} across {rounds} rounds, average {total / rounds:.1f}.")
-    else:
-        print("No battles this run.")
+    print_run_summary(log)
     print(frame)
