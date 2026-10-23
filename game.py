@@ -37,6 +37,8 @@ base_attack = 10
 damage = base_attack + strength * 1.5
 crit_damage = damage * 2
 stamina = health // 10 + endurance
+max_health = health
+max_stamina = stamina
 
 print("Hero characteristics:")
 print(f"Health:    {health}")
@@ -264,6 +266,12 @@ try:
                         print("Quantity must be a positive number.")
                     else:
                         if ok:
+                            if item == "1":
+                                health = min(health + 10 * qty, max_health)
+                            elif item == "2":
+                                stamina = min(stamina + 5 * qty, max_stamina)
+                            else:
+                                ability_bonus += 2 * qty
                             print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
                         else:
                             print(f"Not enough gold: need {price * qty}, have {gold_total}.")
