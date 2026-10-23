@@ -10,6 +10,7 @@ try:
 except ImportError:
     COLOR = False
 
+VERSION = "1.0"
 title = "DUNGEON: THE SILENT WELL"
 frame = "=" * 31
 
@@ -35,6 +36,7 @@ DIRECTIONS = {"north": (-1, 0), "south": (1, 0), "west": (0, -1), "east": (0, 1)
 
 print(frame)
 print(title)
+print(f"v{VERSION}")
 print(frame)
 
 loaded = None
