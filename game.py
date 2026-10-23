@@ -156,24 +156,30 @@ num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
                "5": "torch", "6": "train", "7": "descend", "8": "leaders",
                "9": "shop", "10": "backpack", "11": "drink", "0": "exit"}
 
+commands = ["look", "go", "rest", "listen", "torch", "train", "descend",
+            "leaders", "shop", "backpack", "drink potion",
+            "buy <item> [count]", "exit"]
+MENU = ["What do you do? (number or command; help for help)",
+        "1 - look around (look)",
+        "2 - go forward (go)",
+        "3 - rest (rest)",
+        "4 - listen (listen)",
+        "5 - light a torch (torch)",
+        "6 - train (train)",
+        "7 - descend deeper (descend)",
+        "8 - leaderboard (leaders)",
+        "9 - shop (shop)",
+        "10 - backpack (backpack)",
+        "11 - drink potion (drink)",
+        "0 - exit the dungeon (exit)"]
+
 running = True
 actions = 0
 outcome = "interrupt"
 try:
     while running:
-        print("What do you do?")
-        print("1 - look around")
-        print("2 - go forward")
-        print("3 - rest")
-        print("4 - listen")
-        print("5 - light a torch")
-        print("6 - train")
-        print("7 - descend deeper")
-        print("8 - leaderboard")
-        print("9 - shop")
-        print("10 - backpack")
-        print("11 - drink potion")
-        print("0 - exit the dungeon")
+        print("\n".join(MENU))
+        print()
 
         line = input()
         cmd = line.strip().lower()
@@ -296,6 +302,10 @@ try:
                     if inventory[item] == 0:
                         del inventory[item]
                     print(f"You drink a {item}. Health: {health}. Potions left: {inventory.get(item, 0)}.")
+
+            case "help":
+                print("Commands: " + ", ".join(commands) + ".")
+                print("Numbers 0-11 work as before.")
 
             case "exit":
                 print("You climb back toward the light. The dungeon stays behind.")
