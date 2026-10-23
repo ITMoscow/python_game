@@ -52,6 +52,16 @@ print()
 enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
 
+def hero_hit(strike_n):
+    """Урон героя в удар номер strike_n.
+    Возвращает пару (hit, crit): урон и признак критического удара.
+    Читает глобальные правила damage и crit_damage, не меняет ничего.
+    """
+    if strike_n % 3 == 0:
+        return crit_damage, True
+    return damage, False
+
+
 menu_last = 8
 running = True
 actions = 0
@@ -115,9 +125,8 @@ try:
                 print()
                 print(f"You strike {strikes} times.")
                 for i in range(1, strikes + 1):
-                    hit_damage = damage
-                    if i % 3 == 0:
-                        hit_damage = crit_damage
+                    hit_damage, crit = hero_hit(i)
+                    if crit:
                         crit_count += 1
                         print(f"Strike {i}: {hit_damage:.1f} — critical!")
                     else:
@@ -139,13 +148,10 @@ try:
                     print(f"You descend the stairs. A {enemy} emerges from the darkness!")
                     while enemy_hp > 0 and health > 0:
                         round_n += 1
-                        if round_n % 3 == 0:
-                            hit = crit_damage
-                        else:
-                            hit = damage
+                        hit, crit = hero_hit(round_n)
                         enemy_hp -= hit
                         line = f"Round {round_n}: hero deals {hit:.1f}"
-                        if round_n % 3 == 0:
+                        if crit:
                             line += " — critical!"
                         else:
                             line += "."
