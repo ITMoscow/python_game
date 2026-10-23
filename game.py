@@ -51,6 +51,8 @@ print()
 
 enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
+gold_total = 0
+ability_bonus = 0
 
 def hero_hit(strike_n):
     """Урон героя в удар номер strike_n.
@@ -62,12 +64,15 @@ def hero_hit(strike_n):
     return damage, False
 
 
-def fight(enemy, hero_health):
+def fight(enemy, hero_health, bonus=0):
     """Бой с enemy до гибели одного из двоих.
-    Печатает строки раундов. Возвращает (rounds, won, hero_health):
-    таблицу раундов, признак победы героя и здоровье после боя.
-    Глобальные переменные не меняет: здоровье приходит параметром
-    и возвращается новым значением.
+    bonus — надбавка к урону героя, по умолчанию 0: без эликсира
+    бой идёт как прежде. Надбавка прибавляется после крита
+    (к уже удвоенному урону), а не удваивается вместе с ним.
+    Печатает строки раундов.
+    Возвращает (rounds, won, hero_health, loot): таблицу раундов,
+    признак победы, здоровье после боя и трофеи в золоте.
+    Глобальные переменные не меняет.
     """
     enemy_hp = 45.0
     rounds = []
@@ -76,6 +81,7 @@ def fight(enemy, hero_health):
     while enemy_hp > 0 and hero_health > 0:
         round_n += 1
         hit, crit = hero_hit(round_n)
+        hit = hit + bonus
         enemy_hp -= hit
         line = f"Round {round_n}: hero deals {hit:.1f}"
         if crit:
@@ -91,7 +97,12 @@ def fight(enemy, hero_health):
             line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
             rounds.append([round_n, hit, blow])
         print(line)
-    return rounds, enemy_hp <= 0, hero_health
+    won = enemy_hp <= 0
+    if won:
+        loot = 10 + 5 * round_n
+    else:
+        loot = 0
+    return rounds, won, hero_health, loot
 
 
 def print_leaderboard(log):
@@ -202,12 +213,13 @@ try:
                     print("You descend the stairs. But the dungeon is empty.")
                 else:
                     enemy = random.choice(enemies)
-                    rounds, won, health = fight(enemy, health)
+                    rounds, won, health, loot = fight(enemy, health, bonus=ability_bonus)
                     for r in rounds:
                         log.append(r)
                     if won:
+                        gold_total += loot
                         enemies.remove(enemy)
-                        print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon.")
+                        print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon. Loot: {loot} gold.")
                     print(f"Battle: {len(rounds)} rounds.")
 
             case "8":
@@ -224,7 +236,7 @@ try:
         if running:
             actions += 1
             print()
-            print(f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)}")
+            print(f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)} Gold: {gold_total}")
 
         if health <= 0:
             print(f"{hero_name} falls. The dungeon claims another seeker.")
