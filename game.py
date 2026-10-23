@@ -75,6 +75,7 @@ hero_r, hero_c = 4, 2
 visited = {(4, 2)}
 LOOT = {(1, 1): "old coin", (2, 3): "dusty potion", (3, 3): "guard's gem"}
 found_loot = set()
+DIRECTIONS = {"north": (-1, 0), "south": (1, 0), "west": (0, -1), "east": (0, 1)}
 
 def hero_hit(strike_n):
     """Урон героя в удар номер strike_n.
@@ -209,14 +210,29 @@ try:
                 print("You look around. The room is empty, only dust on the floor.")
 
             case "go":
-                cost = 2
-                if stamina >= cost:
-                    stamina -= cost
-                    print("You go forward carefully. The floor creaks under your feet.")
+                if len(words) > 1 and words[1] in DIRECTIONS:
+                    dr, dc = DIRECTIONS[words[1]]
+                    nr, nc = hero_r + dr, hero_c + dc
+                    if 0 <= nr < len(MAP) and 0 <= nc < len(MAP[nr]) and MAP[nr][nc] != "#":
+                        hero_r, hero_c = nr, nc
+                        visited.add((hero_r, hero_c))
+                        if (hero_r, hero_c) in LOOT:
+                            item = LOOT[(hero_r, hero_c)]
+                            if item not in found_loot:
+                                found_loot.add(item)
+                                print(f"You found {item}! Unique loot: {len(found_loot)}.")
+                        print(f"You step {words[1]}. Room ({hero_r}, {hero_c}).")
+                    else:
+                        print(f"Cannot go {words[1]}: wall or edge.")
                 else:
-                    health -= cost - stamina
-                    stamina = 0
-                    print("No strength left — you keep going on sheer stubbornness.")
+                    cost = 2
+                    if stamina >= cost:
+                        stamina -= cost
+                        print("You go forward carefully. The floor creaks under your feet.")
+                    else:
+                        health -= cost - stamina
+                        stamina = 0
+                        print("No strength left — you keep going on sheer stubbornness.")
 
             case "rest":
                 stamina = stamina + 3
