@@ -10,7 +10,7 @@ print(frame)
 print("What is the hero's name?")
 hero_name = input()
 print(f"Welcome, {hero_name}!")
-print("You enter the dungeon. Dark and damp-smelling.")
+print("You enter the dungeon. Dark and damp.")
 print()
 
 print("Hero setup.")
@@ -143,25 +143,24 @@ try:
                         else:
                             hit = damage
                         enemy_hp -= hit
-                        line = f"Round {round_n}: you deal {hit:.1f} damage"
+                        line = f"Round {round_n}: hero deals {hit:.1f}"
                         if round_n % 3 == 0:
                             line += " — critical!"
                         else:
                             line += "."
                         if enemy_hp <= 0:
-                            line += " The enemy falls."
-                            blow = 0
+                            line += " Enemy falls."
+                            log.append([round_n, hit, 0])
                         else:
                             blow = random.randint(2, 6)
-                            health = health - blow
-                            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits back for {blow}."
+                            health -= blow
+                            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
+                            log.append([round_n, hit, blow])
                         print(line)
-                        log.append(f"round {round_n}: hero -{hit:.1f}, {enemy} -{blow}")
                     if enemy_hp <= 0:
                         enemies.remove(enemy)
-                        print(f"The {enemy} is defeated! {len(enemies)} enemies left in the dungeon.")
-                    print(f"Combat: {round_n} rounds.")
-                    print(f"Last log entry: {log[-1]}")
+                        print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon.")
+                    print(f"Battle: {round_n} rounds.")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
