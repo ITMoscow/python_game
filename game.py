@@ -276,7 +276,8 @@ try:
                     print("You descend the stairs. But the dungeon is empty.")
                 else:
                     enemy = random.choice(enemies)
-                    rounds, won, hero.health, loot = dungeon.fight(enemy, hero.health, ability_bonus, hero.damage, hero.crit_damage)
+                    foe = dungeon.Enemy(enemy, dungeon.enemy_stats[enemy])
+                    rounds, won, loot = dungeon.fight(foe, hero, ability_bonus)
                     for r in rounds:
                         log.append(r)
                     if won:

@@ -54,55 +54,47 @@ class Hero:
         return f"{self.name}: health {self.health}, damage {self.damage:.1f}, stamina {self.stamina}"
 
 
-def hero_hit(strike_n, damage, crit_damage):
-    """Урон героя в удар номер strike_n.
-    Возвращает пару (hit, crit): урон и признак критического удара.
-    Урон и критический урон героя приходят параметрами.
-    """
-    if strike_n % 3 == 0:
-        return crit_damage, True
-    return damage, False
+class Enemy:
+    """Враг на один бой: рабочая копия карточки из enemy_stats."""
+
+    def __init__(self, name, stats):
+        """Берёт здоровье, урон и трофеи из карточки stats."""
+        self.name = name
+        self.hp = stats["hp"]
+        self.damage = stats["damage"]
+        self.loot = stats["loot"]
 
 
-def fight(enemy, hero_health, bonus=0, damage=0, crit_damage=0):
-    """Бой с enemy до гибели одного из двоих.
-    bonus — надбавка к урону героя, по умолчанию 0: без эликсира
-    бой идёт как прежде. Надбавка прибавляется после крита
-    (к уже удвоенному урону), а не удваивается вместе с ним.
-    Карточка врага берётся из enemy_stats по имени: нужны ключи
-    hp, damage, loot. Печатает строки раундов.
-    Возвращает (rounds, won, hero_health, loot): таблицу раундов,
-    признак победы, здоровье после боя и трофеи в золоте.
-    damage и crit_damage — урон героя, модуль глобалов game.py не видит.
-    Глобальные переменные не меняет.
+def fight(enemy, hero, bonus=0):
+    """Бой объекта enemy с объектом hero до гибели одного из двоих.
+    bonus — надбавка к урону героя, по умолчанию 0; прибавляется после
+    крита. Здоровье героя и врага меняется на месте, в объектах.
+    Печатает строки раундов. Возвращает (rounds, won, loot).
     """
-    stats = enemy_stats[enemy]
-    enemy_hp = float(stats["hp"])
     rounds = []
     round_n = 0
-    print(f"You descend the stairs. A {enemy} emerges from the darkness!")
-    while enemy_hp > 0 and hero_health > 0:
+    print(f"You descend the stairs. A {enemy.name} emerges from the darkness!")
+    while enemy.hp > 0 and hero.health > 0:
         round_n += 1
-        hit, crit = hero_hit(round_n, damage, crit_damage)
+        hit, crit = hero.strike(round_n)
         hit = hit + bonus
-        enemy_hp -= hit
+        enemy.hp -= hit
         line = f"Round {round_n}: hero deals {hit:.1f}"
         if crit:
             line += " — critical!"
         else:
             line += "."
-        if enemy_hp <= 0:
+        if enemy.hp <= 0:
             line += " Enemy falls."
             rounds.append([round_n, hit, 0])
         else:
-            blow = stats["damage"]
-            hero_health -= blow
-            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
-            rounds.append([round_n, hit, blow])
+            hero.health -= enemy.damage
+            line += f" {enemy.name.capitalize()} health: {enemy.hp:.1f}. {enemy.name.capitalize()} hits for {enemy.damage}."
+            rounds.append([round_n, hit, enemy.damage])
         print(line)
-    won = enemy_hp <= 0
-    loot = stats["loot"] if won else 0
-    return rounds, won, hero_health, loot
+    won = enemy.hp <= 0
+    loot = enemy.loot if won else 0
+    return rounds, won, loot
 
 
 def buy(price, gold, quantity=1):
@@ -117,5 +109,7 @@ def buy(price, gold, quantity=1):
 
 
 if __name__ == "__main__":
-    rounds, won, hp, loot = fight("skeleton", 100, 0, 20.5, 41.0)
+    test_hero = Hero("test", 100, 7, 5, 4)
+    test_enemy = Enemy("skeleton", enemy_stats["skeleton"])
+    rounds, won, loot = fight(test_enemy, test_hero, 0)
     print(f"self-test: {len(rounds)} rounds, won={won}, loot={loot}")
