@@ -52,6 +52,12 @@ print(f"Stamina reserve: {stamina}")
 print()
 
 enemies = ["ghoul", "skeleton", "spider", "bat"]
+enemy_stats = {
+    "skeleton": {"hp": 45, "damage": 6, "loot": 25},
+    "ghoul": {"hp": 30, "damage": 4, "loot": 15},
+    "spider": {"hp": 20, "damage": 3, "loot": 10},
+    "bat": {"hp": 12, "damage": 2, "loot": 5},
+}
 log = []
 gold_total = 0
 ability_bonus = 0
@@ -73,12 +79,14 @@ def fight(enemy, hero_health, bonus=0):
     bonus — надбавка к урону героя, по умолчанию 0: без эликсира
     бой идёт как прежде. Надбавка прибавляется после крита
     (к уже удвоенному урону), а не удваивается вместе с ним.
-    Печатает строки раундов.
+    Карточка врага берётся из enemy_stats по имени: нужны ключи
+    hp, damage, loot. Печатает строки раундов.
     Возвращает (rounds, won, hero_health, loot): таблицу раундов,
     признак победы, здоровье после боя и трофеи в золоте.
     Глобальные переменные не меняет.
     """
-    enemy_hp = 45.0
+    stats = enemy_stats[enemy]
+    enemy_hp = float(stats["hp"])
     rounds = []
     round_n = 0
     print(f"You descend the stairs. A {enemy} emerges from the darkness!")
@@ -96,16 +104,13 @@ def fight(enemy, hero_health, bonus=0):
             line += " Enemy falls."
             rounds.append([round_n, hit, 0])
         else:
-            blow = random.randint(2, 6)
+            blow = stats["damage"]
             hero_health -= blow
             line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
             rounds.append([round_n, hit, blow])
         print(line)
     won = enemy_hp <= 0
-    if won:
-        loot = 10 + 5 * round_n
-    else:
-        loot = 0
+    loot = stats["loot"] if won else 0
     return rounds, won, hero_health, loot
 
 
