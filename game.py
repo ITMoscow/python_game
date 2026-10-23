@@ -197,9 +197,15 @@ except KeyboardInterrupt:
 finally:
     print(frame)
     if outcome == "death":
-        print(f"You didn't make it, {hero_name}. Actions taken: {actions}.")
+        print(f"You didn't make it, {hero_name}. Actions: {actions}.")
     elif outcome == "exit":
-        print(f"The run is over, {hero_name}. Actions taken: {actions}.")
+        print(f"Run over, {hero_name}. Actions: {actions}.")
     else:
-        print(f"Session interrupted, {hero_name}. Actions taken: {actions}.")
+        print(f"Session interrupted, {hero_name}. Actions: {actions}.")
+    total = sum(r[1] for r in log)
+    rounds = len(log)
+    if rounds > 0:
+        print(f"Damage: {total:.1f} across {rounds} rounds, average {total / rounds:.1f}.")
+    else:
+        print("No battles this run.")
     print(frame)
