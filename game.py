@@ -254,32 +254,29 @@ try:
                 print("Shop:")
                 for name, price in prices.items():
                     print(f"{name}: {price} gold")
-                print("Item name (empty line — not buying):")
-                name = input()
-                if name != "":
-                    if name in prices:
-                        price = prices[name]
-                        print("Quantity (Enter for one):")
-                        qty_line = input()
-                        try:
-                            if qty_line == "":
-                                qty = 1
-                                gold_total, ok = buy(price, gold_total)
-                            else:
-                                qty = int(qty_line)
-                                if qty <= 0:
-                                    raise ValueError
-                                gold_total, ok = buy(price, gold_total, quantity=qty)
-                        except ValueError:
-                            print("Quantity must be a positive number.")
-                        else:
-                            if ok:
-                                inventory[name] = inventory.get(name, 0) + qty
-                                print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
-                            else:
-                                print(f"Not enough gold: need {price * qty}, have {gold_total}.")
-                    else:
-                        print("No such item in the shop.")
+
+            case "buy":
+                if len(words) > 1 and words[-1].isdigit():
+                    qty = int(words[-1])
+                    item = " ".join(words[1:-1])
+                else:
+                    qty = 1
+                    item = " ".join(words[1:])
+                if item == "":
+                    print("Buy what? Type: buy <item>.")
+                    continue
+                if item not in prices:
+                    print("No such item in the shop.")
+                    continue
+                if qty <= 0:
+                    print("Quantity must be a positive number.")
+                    continue
+                gold_total, ok = buy(prices[item], gold_total, quantity=qty)
+                if ok:
+                    inventory[item] = inventory.get(item, 0) + qty
+                    print(f"Bought {qty} {item} for {prices[item] * qty} gold. Gold left: {gold_total}.")
+                else:
+                    print(f"Not enough gold: need {prices[item] * qty}, have {gold_total}.")
 
             case "backpack":
                 if not inventory:
@@ -290,14 +287,15 @@ try:
                         print(f"{name}: {qty} pcs")
 
             case "drink":
-                if inventory.get("potion", 0) == 0:
-                    print("No potions in the backpack.")
+                item = " ".join(words[1:]) or "potion"
+                if inventory.get(item, 0) == 0:
+                    print(f"No {item} in the backpack.")
                 else:
                     health = min(health + 10, max_health)
-                    inventory["potion"] -= 1
-                    if inventory["potion"] == 0:
-                        del inventory["potion"]
-                    print(f"You drink a potion. Health: {health}. Potions left: {inventory.get('potion', 0)}.")
+                    inventory[item] -= 1
+                    if inventory[item] == 0:
+                        del inventory[item]
+                    print(f"You drink a {item}. Health: {health}. Potions left: {inventory.get(item, 0)}.")
 
             case "exit":
                 print("You climb back toward the light. The dungeon stays behind.")
