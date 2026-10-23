@@ -13,10 +13,15 @@ print()
 
 print("Настройка героя.")
 print("Здоровье, сила, ловкость, выносливость — по одному числу в строке:")
-health = int(input())
-strength = int(input())
-agility = int(input())
-endurance = int(input())
+while True:
+    try:
+        health = int(input())
+        strength = int(input())
+        agility = int(input())
+        endurance = int(input())
+        break
+    except ValueError:
+        print("Ой: одна из строк не число. Введите все четыре снова:")
 
 base_attack = 10
 damage = base_attack + strength * 1.5
