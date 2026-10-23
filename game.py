@@ -52,7 +52,7 @@ print()
 enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
 
-menu_last = 7
+menu_last = 8
 running = True
 actions = 0
 outcome = "interrupt"
@@ -66,6 +66,7 @@ try:
         print("5 - light a torch")
         print("6 - train")
         print("7 - descend deeper")
+        print("8 - leaderboard")
         print("0 - exit the dungeon")
 
         while True:
@@ -161,6 +162,15 @@ try:
                         enemies.remove(enemy)
                         print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon.")
                     print(f"Battle: {round_n} rounds.")
+
+            case "8":
+                if not log:
+                    print("You haven't fought yet.")
+                else:
+                    top = sorted(log, key=lambda r: r[1], reverse=True)[:3]
+                    print("Leaderboard (hero damage):")
+                    for i in range(len(top)):
+                        print(f"{i + 1}. Round {top[i][0]}: {top[i][1]:.1f}")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
