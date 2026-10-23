@@ -52,7 +52,7 @@ print()
 enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
 
-menu_last = 6
+menu_last = 7
 running = True
 actions = 0
 outcome = "interrupt"
@@ -65,6 +65,7 @@ try:
         print("4 - listen")
         print("5 - light a torch")
         print("6 - train")
+        print("7 - descend deeper")
         print("0 - exit the dungeon")
 
         while True:
@@ -126,6 +127,15 @@ try:
                 print(f"Total: {strikes} strikes, {crit_count} critical.")
                 print(f"Total damage: {total_damage:.1f}")
                 print(f"Average damage: {total_damage / strikes:.1f}")
+
+            case "7":
+                if not enemies:
+                    print("You descend the stairs. But the dungeon is empty.")
+                else:
+                    enemy = random.choice(enemies)
+                    enemy_hp = 45
+                    round_n = 0
+                    print(f"You descend the stairs. A {enemy} emerges from the darkness!")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
