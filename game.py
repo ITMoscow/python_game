@@ -56,6 +56,7 @@ log = []
 gold_total = 0
 ability_bonus = 0
 prices = {"potion": 10, "torch_oil": 15, "war_elixir": 40}
+inventory = {}
 
 def hero_hit(strike_n):
     """Урон героя в удар номер strike_n.
@@ -146,7 +147,7 @@ def buy(price, gold, quantity=1):
     return gold, False
 
 
-menu_last = 9
+menu_last = 10
 running = True
 actions = 0
 outcome = "interrupt"
@@ -162,6 +163,7 @@ try:
         print("7 - descend deeper")
         print("8 - leaderboard")
         print("9 - shop")
+        print("10 - backpack")
         print("0 - exit the dungeon")
 
         while True:
@@ -264,11 +266,20 @@ try:
                             print("Quantity must be a positive number.")
                         else:
                             if ok:
+                                inventory[name] = inventory.get(name, 0) + qty
                                 print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
                             else:
                                 print(f"Not enough gold: need {price * qty}, have {gold_total}.")
                     else:
                         print("No such item in the shop.")
+
+            case "10":
+                if not inventory:
+                    print("Backpack is empty.")
+                else:
+                    print("Backpack:")
+                    for name, qty in inventory.items():
+                        print(f"{name}: {qty} pcs")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
