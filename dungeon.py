@@ -49,6 +49,20 @@ class Hero:
         """Лечит на amount, но не выше потолка cap."""
         self.health = min(self.health + amount, cap)
 
+    def to_dict(self):
+        """Словарь состояния героя для сохранения в JSON."""
+        return {"name": self.name, "health": self.health,
+                "stamina": self.stamina, "strength": self.strength,
+                "agility": self.agility, "endurance": self.endurance}
+
+    @staticmethod
+    def from_dict(data):
+        """Собирает героя из словаря to_dict; текущий запас сил берётся из файла."""
+        hero = Hero(data["name"], data["health"], data["strength"],
+                    data["agility"], data["endurance"])
+        hero.stamina = data["stamina"]
+        return hero
+
     def __str__(self):
         """Формуляр героя одной строкой."""
         return f"{self.name}: health {self.health}, damage {self.damage:.1f}, stamina {self.stamina}"

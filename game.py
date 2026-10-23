@@ -81,9 +81,7 @@ if loaded is None:
     max_stamina = hero.stamina
     print(hero)
 else:
-    hero = dungeon.Hero(loaded["hero"], loaded["health"], loaded["strength"],
-                        loaded["agility"], loaded["endurance"])
-    hero.stamina = loaded["stamina"]
+    hero = dungeon.Hero.from_dict(loaded["hero"])
     gold_total = loaded["gold"]
     actions = loaded["actions"]
     max_health = loaded["max_health"]
@@ -145,19 +143,14 @@ def scout(r, c, seen):
 def write_save():
     """Собирает состояние забега и пишет его в save.json.
     Кортежи и множества превращает в списки: JSON их не знает.
-    Кроме образца сохраняет характеристики, потолки, надбавку,
-    рюкзак и журнал — без них продолжение не восстановит урон и итог.
+    Герой пишется словарём to_dict. Кроме образца сохраняются потолки,
+    надбавка, рюкзак и журнал — без них продолжение не восстановит итог.
     Возвращает None.
     """
     save = {}
-    save["hero"] = hero.name
-    save["health"] = hero.health
-    save["stamina"] = hero.stamina
+    save["hero"] = hero.to_dict()
     save["gold"] = gold_total
     save["actions"] = actions
-    save["strength"] = hero.strength
-    save["agility"] = hero.agility
-    save["endurance"] = hero.endurance
     save["max_health"] = max_health
     save["max_stamina"] = max_stamina
     save["bonus"] = ability_bonus
