@@ -40,6 +40,7 @@ print("2 - идти вперёд")
 print("3 - отдохнуть")
 print("4 - прислушаться")
 print("5 - зажечь факел")
+print("6 - тренировка")
 
 choice = input()
 match choice:
@@ -60,6 +61,29 @@ match choice:
     case "5":
         stamina = stamina - 1
         print("Вы зажигаете факел. На стенах проступают старые надписи.")
+
+    case "6":
+        strikes = 5
+        total_damage = 0
+        crit_count = 0
+        print("Вы подходите к тренировочному чучелу.")
+        print("Оно стоит здесь с тех пор, как сюда приходил последний искатель.")
+        print()
+        print(f"Наносите {strikes} ударов.")
+        for i in range(1, strikes + 1):
+            hit_damage = damage
+            if i % 3 == 0:
+                hit_damage = crit_damage
+                crit_count += 1
+                print(f"Удар {i}: {hit_damage:.1f} — критический!")
+            else:
+                print(f"Удар {i}: {hit_damage:.1f}")
+            total_damage += hit_damage
+        stamina = stamina - 1
+        print()
+        print(f"Итог: {strikes} ударов, {crit_count} критический.")
+        print(f"Общий урон: {total_damage:.1f}")
+        print(f"Средний урон: {total_damage / strikes:.1f}")
 
     case _:
         print("Такого действия нет.")
