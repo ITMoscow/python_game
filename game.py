@@ -150,15 +150,18 @@ try:
                             line += "."
                         if enemy_hp <= 0:
                             line += " The enemy falls."
+                            blow = 0
                         else:
                             blow = random.randint(2, 6)
                             health = health - blow
                             line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits back for {blow}."
                         print(line)
+                        log.append(f"round {round_n}: hero -{hit:.1f}, {enemy} -{blow}")
                     if enemy_hp <= 0:
                         enemies.remove(enemy)
                         print(f"The {enemy} is defeated! {len(enemies)} enemies left in the dungeon.")
                     print(f"Combat: {round_n} rounds.")
+                    print(f"Last log entry: {log[-1]}")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
