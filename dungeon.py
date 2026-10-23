@@ -28,6 +28,27 @@ class Hero:
         self.crit_damage = self.damage * 2
         self.stamina = health // 10 + endurance
 
+    def strike(self, n):
+        """Урон в удар номер n; возвращает пару (hit, crit)."""
+        if n % 3 == 0:
+            return self.crit_damage, True
+        return self.damage, False
+
+    def spend_stamina(self, cost):
+        """Тратит cost сил. Если сил не хватает, недостающее берётся из здоровья.
+        Возвращает True, если шли на упорстве и здоровье списано.
+        """
+        if self.stamina >= cost:
+            self.stamina -= cost
+            return False
+        self.health -= cost - self.stamina
+        self.stamina = 0
+        return True
+
+    def heal(self, amount, cap):
+        """Лечит на amount, но не выше потолка cap."""
+        self.health = min(self.health + amount, cap)
+
     def __str__(self):
         """Формуляр героя одной строкой."""
         return f"{self.name}: health {self.health}, damage {self.damage:.1f}, stamina {self.stamina}"

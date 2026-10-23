@@ -233,14 +233,10 @@ try:
                     else:
                         print(f"Cannot go {words[1]}: wall or edge.")
                 else:
-                    cost = 2
-                    if hero.stamina >= cost:
-                        hero.stamina -= cost
-                        print("You go forward carefully. The floor creaks under your feet.")
-                    else:
-                        hero.health -= cost - hero.stamina
-                        hero.stamina = 0
+                    if hero.spend_stamina(2):
                         print("No strength left — you keep going on sheer stubbornness.")
+                    else:
+                        print("You go forward carefully. The floor creaks under your feet.")
 
             case "rest":
                 hero.stamina = hero.stamina + 3
@@ -262,7 +258,7 @@ try:
                 print()
                 print(f"You strike {strikes} times.")
                 for i in range(1, strikes + 1):
-                    hit_damage, crit = dungeon.hero_hit(i, hero.damage, hero.crit_damage)
+                    hit_damage, crit = hero.strike(i)
                     if crit:
                         crit_count += 1
                         print(f"Strike {i}: {hit_damage:.1f} — critical!")
@@ -337,7 +333,7 @@ try:
                 if inventory.get(item, 0) == 0:
                     print(f"No {item} in the backpack.")
                 else:
-                    hero.health = min(hero.health + 10, max_health)
+                    hero.heal(10, max_health)
                     inventory[item] -= 1
                     if inventory[item] == 0:
                         del inventory[item]
