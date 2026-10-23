@@ -165,13 +165,31 @@ def buy(price, gold, quantity=1):
     return gold, False
 
 
+def scout(r, c, seen):
+    """Рекурсивно считает комнаты, достижимые из клетки (r, c).
+    seen — множество уже посчитанных клеток, общее на весь обход.
+    Нижний ряд карты не закрыт стеной (там вход S), поэтому
+    выход за границы проверяется так же, как стена.
+    Возвращает число комнат, ничего не печатает.
+    """
+    if not (0 <= r < len(MAP) and 0 <= c < len(MAP[r])):
+        return 0
+    if (r, c) in seen or MAP[r][c] == "#":
+        return 0
+    seen.add((r, c))
+    total = 1
+    for dr, dc in DIRECTIONS.values():
+        total += scout(r + dr, c + dc, seen)
+    return total
+
+
 num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
                "5": "torch", "6": "train", "7": "descend", "8": "leaders",
                "9": "shop", "10": "backpack", "11": "drink", "0": "exit"}
 
 commands = ["look", "go", "rest", "listen", "torch", "train", "descend",
             "leaders", "shop", "backpack", "drink potion",
-            "buy <item> [count]", "go <north|south|west|east>", "map", "exit"]
+            "buy <item> [count]", "go <north|south|west|east>", "map", "scout", "exit"]
 MENU = ["What do you do? (number or command; help for help)",
         "1 - look around (look)",
         "2 - go forward (go)",
@@ -185,6 +203,7 @@ MENU = ["What do you do? (number or command; help for help)",
         "10 - backpack (backpack)",
         "11 - drink potion (drink)",
         "map - dungeon map",
+        "scout - count reachable rooms",
         "0 - exit the dungeon (exit)"]
 
 running = True
@@ -340,6 +359,10 @@ try:
                         cell = "@" if (i, j) == (hero_r, hero_c) else MAP[i][j]
                         cells.append(cell)
                     print(" ".join(cells))
+
+            case "scout":
+                seen = set()
+                print(f"Scout: {scout(hero_r, hero_c, seen)} rooms reachable.")
 
             case "help":
                 print("Commands: " + ", ".join(commands) + ".")
