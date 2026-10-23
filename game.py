@@ -19,9 +19,17 @@ while True:
         strength = int(input())
         agility = int(input())
         endurance = int(input())
-        break
     except ValueError:
         print("Ой: одна из строк не число. Введите все четыре снова:")
+        continue
+    try:
+        if health <= 0:
+            raise ValueError(f"Здоровье должно быть положительным, а введено {health}")
+        if strength < 0 or agility < 0 or endurance < 0:
+            raise ValueError("Характеристики не могут быть отрицательными")
+        break
+    except ValueError as e:
+        print(f"{e}. Введите все четыре снова:")
 
 base_attack = 10
 damage = base_attack + strength * 1.5
