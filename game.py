@@ -171,6 +171,8 @@ try:
                     print("Leaderboard (hero damage):")
                     for i in range(len(top)):
                         print(f"{i + 1}. Round {top[i][0]}: {top[i][1]:.1f}")
+                    worst = max(log, key=lambda r: r[2])
+                    print(f"Strongest enemy hit: {worst[2]} (round {worst[0]}).")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
