@@ -136,6 +136,29 @@ try:
                     enemy_hp = 45
                     round_n = 0
                     print(f"You descend the stairs. A {enemy} emerges from the darkness!")
+                    while enemy_hp > 0 and health > 0:
+                        round_n += 1
+                        if round_n % 3 == 0:
+                            hit = crit_damage
+                        else:
+                            hit = damage
+                        enemy_hp -= hit
+                        line = f"Round {round_n}: you deal {hit:.1f} damage"
+                        if round_n % 3 == 0:
+                            line += " — critical!"
+                        else:
+                            line += "."
+                        if enemy_hp <= 0:
+                            line += " The enemy falls."
+                        else:
+                            blow = random.randint(2, 6)
+                            health = health - blow
+                            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits back for {blow}."
+                        print(line)
+                    if enemy_hp <= 0:
+                        enemies.remove(enemy)
+                        print(f"The {enemy} is defeated! {len(enemies)} enemies left in the dungeon.")
+                    print(f"Combat: {round_n} rounds.")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
@@ -148,7 +171,7 @@ try:
         if running:
             actions += 1
             print()
-            print(f"Health: {health} Stamina: {stamina}")
+            print(f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)}")
 
         if health <= 0:
             print(f"{hero_name} falls. The dungeon claims another seeker.")
