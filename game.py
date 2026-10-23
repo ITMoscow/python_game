@@ -55,6 +55,7 @@ enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
 gold_total = 0
 ability_bonus = 0
+prices = {"potion": 10, "torch_oil": 15, "war_elixir": 40}
 
 def hero_hit(strike_n):
     """Урон героя в удар номер strike_n.
@@ -241,42 +242,33 @@ try:
 
             case "9":
                 print("Shop:")
-                print("1 - potion (+10 health): 10 gold")
-                print("2 - torch oil (+5 stamina): 15 gold")
-                print("3 - war elixir (+2 damage for the run): 40 gold")
-                print("Item number (0 — not buying):")
-                item = input()
-                prices = (10, 15, 40)
-                names = ("potion", "torch oil", "war elixir")
-                if item in ("1", "2", "3"):
-                    price = prices[int(item) - 1]
-                    name = names[int(item) - 1]
-                    print("Quantity (Enter for one):")
-                    qty_line = input()
-                    try:
-                        if qty_line == "":
-                            qty = 1
-                            gold_total, ok = buy(price, gold_total)
-                        else:
-                            qty = int(qty_line)
-                            if qty <= 0:
-                                raise ValueError
-                            gold_total, ok = buy(price, gold_total, quantity=qty)
-                    except ValueError:
-                        print("Quantity must be a positive number.")
-                    else:
-                        if ok:
-                            if item == "1":
-                                health = min(health + 10 * qty, max_health)
-                            elif item == "2":
-                                stamina = min(stamina + 5 * qty, max_stamina)
+                for name, price in prices.items():
+                    print(f"{name}: {price} gold")
+                print("Item name (empty line — not buying):")
+                name = input()
+                if name != "":
+                    if name in prices:
+                        price = prices[name]
+                        print("Quantity (Enter for one):")
+                        qty_line = input()
+                        try:
+                            if qty_line == "":
+                                qty = 1
+                                gold_total, ok = buy(price, gold_total)
                             else:
-                                ability_bonus += 2 * qty
-                            print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
+                                qty = int(qty_line)
+                                if qty <= 0:
+                                    raise ValueError
+                                gold_total, ok = buy(price, gold_total, quantity=qty)
+                        except ValueError:
+                            print("Quantity must be a positive number.")
                         else:
-                            print(f"Not enough gold: need {price * qty}, have {gold_total}.")
-                elif item != "0":
-                    print("No such item in the shop.")
+                            if ok:
+                                print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
+                            else:
+                                print(f"Not enough gold: need {price * qty}, have {gold_total}.")
+                    else:
+                        print("No such item in the shop.")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
