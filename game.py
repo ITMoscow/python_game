@@ -132,7 +132,18 @@ def print_run_summary(log):
         print("No battles this run.")
 
 
-menu_last = 8
+def buy(price, gold, quantity=1):
+    """Покупает quantity штук товара ценой price за золото gold.
+    quantity по умолчанию 1. Возвращает (gold_left, ok): остаток
+    золота и признак успешной покупки. Ничего не печатает.
+    """
+    cost = price * quantity
+    if gold >= cost:
+        return gold - cost, True
+    return gold, False
+
+
+menu_last = 9
 running = True
 actions = 0
 outcome = "interrupt"
@@ -147,6 +158,7 @@ try:
         print("6 - train")
         print("7 - descend deeper")
         print("8 - leaderboard")
+        print("9 - shop")
         print("0 - exit the dungeon")
 
         while True:
@@ -224,6 +236,39 @@ try:
 
             case "8":
                 print_leaderboard(log)
+
+            case "9":
+                print("Shop:")
+                print("1 - potion (+10 health): 10 gold")
+                print("2 - torch oil (+5 stamina): 15 gold")
+                print("3 - war elixir (+2 damage for the run): 40 gold")
+                print("Item number (0 — not buying):")
+                item = input()
+                prices = (10, 15, 40)
+                names = ("potion", "torch oil", "war elixir")
+                if item in ("1", "2", "3"):
+                    price = prices[int(item) - 1]
+                    name = names[int(item) - 1]
+                    print("Quantity (Enter for one):")
+                    qty_line = input()
+                    try:
+                        if qty_line == "":
+                            qty = 1
+                            gold_total, ok = buy(price, gold_total)
+                        else:
+                            qty = int(qty_line)
+                            if qty <= 0:
+                                raise ValueError
+                            gold_total, ok = buy(price, gold_total, quantity=qty)
+                    except ValueError:
+                        print("Quantity must be a positive number.")
+                    else:
+                        if ok:
+                            print(f"Bought {qty} {name} for {price * qty} gold. Gold left: {gold_total}.")
+                        else:
+                            print(f"Not enough gold: need {price * qty}, have {gold_total}.")
+                elif item != "0":
+                    print("No such item in the shop.")
 
             case "0":
                 print("You climb back toward the light. The dungeon stays behind.")
