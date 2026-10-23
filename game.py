@@ -1,6 +1,13 @@
 import random
 import dungeon
 
+try:
+    from colorama import Fore, Style, init
+    init()
+    COLOR = True
+except ImportError:
+    COLOR = False
+
 title = "DUNGEON: THE SILENT WELL"
 frame = "=" * 31
 
@@ -231,7 +238,11 @@ try:
                     if won:
                         gold_total += loot
                         enemies.remove(enemy)
-                        print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon. Loot: {loot} gold.")
+                        win_line = f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon. Loot: {loot} gold."
+                        if COLOR:
+                            print(Fore.YELLOW + win_line + Style.RESET_ALL)
+                        else:
+                            print(win_line)
                     print(f"Battle: {len(rounds)} rounds.")
 
             case "leaders":
@@ -313,7 +324,11 @@ try:
         if running:
             actions += 1
             print()
-            print(f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)} Gold: {gold_total}")
+            state = f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)} Gold: {gold_total}"
+            if COLOR:
+                print(Fore.GREEN + state + Style.RESET_ALL)
+            else:
+                print(state)
 
         if health <= 0:
             print(f"{hero_name} falls. The dungeon claims another seeker.")
