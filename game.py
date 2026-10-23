@@ -35,6 +35,7 @@ print(f"Запас сил: {stamina}")
 print()
 
 running = True
+actions = 0
 while running:
     print("Что делаешь?")
     print("1 - осмотреться")
@@ -43,6 +44,7 @@ while running:
     print("4 - прислушаться")
     print("5 - зажечь факел")
     print("6 - тренировка")
+    print("0 - выйти из подземелья")
 
     choice = input()
     match choice:
@@ -87,12 +89,18 @@ while running:
             print(f"Общий урон: {total_damage:.1f}")
             print(f"Средний урон: {total_damage / strikes:.1f}")
 
+        case "0":
+            print("Вы поднимаетесь обратно к свету. Подземелье остаётся позади.")
+            running = False
+
         case _:
             print("Такого действия нет.")
 
-    print()
-    print(f"Здоровье: {health} Запас сил: {stamina}")
+    if running:
+        actions += 1
+        print()
+        print(f"Здоровье: {health} Запас сил: {stamina}")
 
 print(frame)
-print(f"Удачи, {hero_name}!")
+print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
 print(frame)
