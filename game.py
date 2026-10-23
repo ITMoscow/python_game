@@ -1,3 +1,4 @@
+import json
 import random
 import dungeon
 
@@ -121,6 +122,35 @@ def scout(r, c, seen):
     for dr, dc in DIRECTIONS.values():
         total += scout(r + dr, c + dc, seen)
     return total
+
+
+def write_save():
+    """Собирает состояние забега и пишет его в save.json.
+    Кортежи и множества превращает в списки: JSON их не знает.
+    Кроме образца сохраняет характеристики, потолки, надбавку,
+    рюкзак и журнал — без них продолжение не восстановит урон и итог.
+    Возвращает None.
+    """
+    save = {}
+    save["hero"] = hero_name
+    save["health"] = health
+    save["stamina"] = stamina
+    save["gold"] = gold_total
+    save["actions"] = actions
+    save["strength"] = strength
+    save["agility"] = agility
+    save["endurance"] = endurance
+    save["max_health"] = max_health
+    save["max_stamina"] = max_stamina
+    save["bonus"] = ability_bonus
+    save["inventory"] = inventory
+    save["log"] = log
+    save["enemies"] = enemies
+    save["position"] = [hero_r, hero_c]
+    save["visited"] = [list(p) for p in visited]
+    save["loot"] = sorted(found_loot)
+    with open("save.json", "w", encoding="utf-8") as f:
+        json.dump(save, f, ensure_ascii=False, indent=2)
 
 
 num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
@@ -314,6 +344,8 @@ try:
 
             case "exit":
                 print("You climb back toward the light. The dungeon stays behind.")
+                write_save()
+                print("Progress saved.")
                 outcome = "exit"
                 running = False
 
