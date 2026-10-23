@@ -313,7 +313,8 @@ try:
                 running = False
 
             case _:
-                print("No such action.")
+                print(f"Don't understand command: '{line.strip()}'. Type 'help'.")
+                continue
 
         if running:
             actions += 1
