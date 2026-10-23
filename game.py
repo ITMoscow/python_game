@@ -47,7 +47,6 @@ if os.path.exists("save.json"):
                 loaded = json.load(f)
         except json.JSONDecodeError:
             print("The save is damaged. Starting a new run.")
-            loaded = None
 
 if loaded is None:
     print("What is the hero's name?")
