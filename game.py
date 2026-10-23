@@ -168,6 +168,21 @@ num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
                "5": "torch", "6": "train", "7": "descend", "8": "leaders",
                "9": "shop", "10": "backpack", "11": "drink", "0": "exit"}
 
+def parse_command(line):
+    """Возвращает пару (verb, words): глагол и слова команды.
+    Нормализует регистр и поля, номер пункта переводит в глагол
+    через num_to_verb. Для пустой строки возвращает ("", []).
+    """
+    cmd = line.strip().lower()
+    words = cmd.split()
+    if not words:
+        return "", []
+    verb = words[0]
+    if cmd in num_to_verb:
+        verb = num_to_verb[cmd]
+    return verb, words
+
+
 commands = ["look", "go", "rest", "listen", "torch", "train", "descend",
             "leaders", "shop", "backpack", "drink potion",
             "buy <item> [count]", "go <north|south|west|east>", "map", "scout", "newgame", "exit"]
@@ -196,15 +211,11 @@ try:
         print()
 
         line = input()
-        cmd = line.strip().lower()
-        while cmd == "":
+        verb, words = parse_command(line)
+        while verb == "":
             print("Empty command. Type a command or number.")
             line = input()
-            cmd = line.strip().lower()
-        words = cmd.split()
-        verb = words[0]
-        if cmd in num_to_verb:
-            verb = num_to_verb[cmd]
+            verb, words = parse_command(line)
 
         match verb:
             case "look":
