@@ -76,32 +76,16 @@ if loaded is None:
         except ValueError as e:
             print(f"{e}. Enter all four again:")
 
-    base_attack = 10
-    damage = base_attack + strength * 1.5
-    crit_damage = damage * 2
-    stamina = health // 10 + endurance
-    max_health = health
-    max_stamina = stamina
-
-    print("Hero characteristics:")
-    print(f"Health:    {health}")
-    print(f"Strength:  {strength}")
-    print(f"Agility:   {agility}")
-    print(f"Endurance: {endurance}")
-    print()
-    print(f"Hero damage: {damage:.1f}")
-    print(f"Critical damage: {crit_damage:.1f}")
-    print(f"Stamina reserve: {stamina}")
-    print()
+    hero = dungeon.Hero(hero_name, health, strength, agility, endurance)
+    max_health = hero.health
+    max_stamina = hero.stamina
+    print(hero)
 else:
-    hero_name = loaded["hero"]
-    health = loaded["health"]
-    stamina = loaded["stamina"]
+    hero = dungeon.Hero(loaded["hero"], loaded["health"], loaded["strength"],
+                        loaded["agility"], loaded["endurance"])
+    hero.stamina = loaded["stamina"]
     gold_total = loaded["gold"]
     actions = loaded["actions"]
-    strength = loaded["strength"]
-    agility = loaded["agility"]
-    endurance = loaded["endurance"]
     max_health = loaded["max_health"]
     max_stamina = loaded["max_stamina"]
     ability_bonus = loaded["bonus"]
@@ -111,10 +95,7 @@ else:
     hero_r, hero_c = loaded["position"]
     visited = {tuple(p) for p in loaded["visited"]}
     found_loot = set(loaded["loot"])
-    base_attack = 10
-    damage = base_attack + strength * 1.5
-    crit_damage = damage * 2
-    print(f"Run continued: health {health}, gold {gold_total}, enemies left {len(enemies)}.")
+    print(f"Run continued: health {hero.health}, gold {gold_total}, enemies left {len(enemies)}.")
 
 def print_leaderboard(log):
     """Печатает топ-3 раундов по урону героя и рекорд врага.
@@ -169,14 +150,14 @@ def write_save():
     Возвращает None.
     """
     save = {}
-    save["hero"] = hero_name
-    save["health"] = health
-    save["stamina"] = stamina
+    save["hero"] = hero.name
+    save["health"] = hero.health
+    save["stamina"] = hero.stamina
     save["gold"] = gold_total
     save["actions"] = actions
-    save["strength"] = strength
-    save["agility"] = agility
-    save["endurance"] = endurance
+    save["strength"] = hero.strength
+    save["agility"] = hero.agility
+    save["endurance"] = hero.endurance
     save["max_health"] = max_health
     save["max_stamina"] = max_stamina
     save["bonus"] = ability_bonus
@@ -253,23 +234,23 @@ try:
                         print(f"Cannot go {words[1]}: wall or edge.")
                 else:
                     cost = 2
-                    if stamina >= cost:
-                        stamina -= cost
+                    if hero.stamina >= cost:
+                        hero.stamina -= cost
                         print("You go forward carefully. The floor creaks under your feet.")
                     else:
-                        health -= cost - stamina
-                        stamina = 0
+                        hero.health -= cost - hero.stamina
+                        hero.stamina = 0
                         print("No strength left — you keep going on sheer stubbornness.")
 
             case "rest":
-                stamina = stamina + 3
+                hero.stamina = hero.stamina + 3
                 print("You sit on the floor and catch your breath. Strength returns.")
 
             case "listen":
                 print("You listen. Somewhere far away water is dripping.")
 
             case "torch":
-                stamina = stamina - 1
+                hero.stamina = hero.stamina - 1
                 print("You light a torch. Old inscriptions appear on the walls.")
 
             case "train":
@@ -281,14 +262,14 @@ try:
                 print()
                 print(f"You strike {strikes} times.")
                 for i in range(1, strikes + 1):
-                    hit_damage, crit = dungeon.hero_hit(i, damage, crit_damage)
+                    hit_damage, crit = dungeon.hero_hit(i, hero.damage, hero.crit_damage)
                     if crit:
                         crit_count += 1
                         print(f"Strike {i}: {hit_damage:.1f} — critical!")
                     else:
                         print(f"Strike {i}: {hit_damage:.1f}")
                     total_damage += hit_damage
-                stamina = stamina - 1
+                hero.stamina = hero.stamina - 1
                 print()
                 print(f"Total: {strikes} strikes, {crit_count} critical.")
                 print(f"Total damage: {total_damage:.1f}")
@@ -299,7 +280,7 @@ try:
                     print("You descend the stairs. But the dungeon is empty.")
                 else:
                     enemy = random.choice(enemies)
-                    rounds, won, health, loot = dungeon.fight(enemy, health, ability_bonus, damage, crit_damage)
+                    rounds, won, hero.health, loot = dungeon.fight(enemy, hero.health, ability_bonus, hero.damage, hero.crit_damage)
                     for r in rounds:
                         log.append(r)
                     if won:
@@ -356,11 +337,11 @@ try:
                 if inventory.get(item, 0) == 0:
                     print(f"No {item} in the backpack.")
                 else:
-                    health = min(health + 10, max_health)
+                    hero.health = min(hero.health + 10, max_health)
                     inventory[item] -= 1
                     if inventory[item] == 0:
                         del inventory[item]
-                    print(f"You drink a {item}. Health: {health}. Potions left: {inventory.get(item, 0)}.")
+                    print(f"You drink a {item}. Health: {hero.health}. Potions left: {inventory.get(item, 0)}.")
 
             case "map":
                 print("Map:")
@@ -401,14 +382,14 @@ try:
         if running:
             actions += 1
             print()
-            state = f"Health: {health} Stamina: {stamina} Enemies left: {len(enemies)} Gold: {gold_total}"
+            state = f"Health: {hero.health} Stamina: {hero.stamina} Enemies left: {len(enemies)} Gold: {gold_total}"
             if COLOR:
                 print(Fore.GREEN + state + Style.RESET_ALL)
             else:
                 print(state)
 
-        if health <= 0:
-            print(f"{hero_name} falls. The dungeon claims another seeker.")
+        if hero.health <= 0:
+            print(f"{hero.name} falls. The dungeon claims another seeker.")
             if os.path.exists("save.json"):
                 os.remove("save.json")
             outcome = "death"
@@ -426,10 +407,10 @@ finally:
         print("Left behind in the backpack: nothing.")
     print(frame)
     if outcome == "death":
-        print(f"You didn't make it, {hero_name}. Actions: {actions}.")
+        print(f"You didn't make it, {hero.name}. Actions: {actions}.")
     elif outcome == "exit":
-        print(f"Run over, {hero_name}. Actions: {actions}.")
+        print(f"Run over, {hero.name}. Actions: {actions}.")
     else:
-        print(f"Session interrupted, {hero_name}. Actions: {actions}.")
+        print(f"Session interrupted, {hero.name}. Actions: {actions}.")
     print_run_summary(log)
     print(frame)

@@ -14,6 +14,25 @@ enemy_stats = {
 }
 
 
+class Hero:
+    """Герой забега: имя, характеристики и текущее состояние."""
+
+    def __init__(self, name, health, strength, agility, endurance):
+        """Раскладывает характеристики по атрибутам и считает урон и запас сил."""
+        self.name = name
+        self.health = health
+        self.strength = strength
+        self.agility = agility
+        self.endurance = endurance
+        self.damage = 10 + strength * 1.5
+        self.crit_damage = self.damage * 2
+        self.stamina = health // 10 + endurance
+
+    def __str__(self):
+        """Формуляр героя одной строкой."""
+        return f"{self.name}: health {self.health}, damage {self.damage:.1f}, stamina {self.stamina}"
+
+
 def hero_hit(strike_n, damage, crit_damage):
     """Урон героя в удар номер strike_n.
     Возвращает пару (hit, crit): урон и признак критического удара.
