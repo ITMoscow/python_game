@@ -152,7 +152,10 @@ def buy(price, gold, quantity=1):
     return gold, False
 
 
-menu_last = 11
+num_to_verb = {"1": "look", "2": "go", "3": "rest", "4": "listen",
+               "5": "torch", "6": "train", "7": "descend", "8": "leaders",
+               "9": "shop", "10": "backpack", "11": "drink", "0": "exit"}
+
 running = True
 actions = 0
 outcome = "interrupt"
@@ -172,23 +175,22 @@ try:
         print("11 - drink potion")
         print("0 - exit the dungeon")
 
-        while True:
-            choice = input()
-            try:
-                menu_number = int(choice)
-            except ValueError:
-                print("No such option. Enter an option number from the menu.")
-                continue
-            if 0 <= menu_number <= menu_last:
-                break
-            print("No such option. Enter an option number from the menu.")
-        choice = str(menu_number)
+        line = input()
+        cmd = line.strip().lower()
+        while cmd == "":
+            print("Empty command. Type a command or number.")
+            line = input()
+            cmd = line.strip().lower()
+        words = cmd.split()
+        verb = words[0]
+        if cmd in num_to_verb:
+            verb = num_to_verb[cmd]
 
-        match choice:
-            case "1":
+        match verb:
+            case "look":
                 print("You look around. The room is empty, only dust on the floor.")
 
-            case "2":
+            case "go":
                 cost = 2
                 if stamina >= cost:
                     stamina -= cost
@@ -198,18 +200,18 @@ try:
                     stamina = 0
                     print("No strength left — you keep going on sheer stubbornness.")
 
-            case "3":
+            case "rest":
                 stamina = stamina + 3
                 print("You sit on the floor and catch your breath. Strength returns.")
 
-            case "4":
+            case "listen":
                 print("You listen. Somewhere far away water is dripping.")
 
-            case "5":
+            case "torch":
                 stamina = stamina - 1
                 print("You light a torch. Old inscriptions appear on the walls.")
 
-            case "6":
+            case "train":
                 strikes = 5
                 total_damage = 0
                 crit_count = 0
@@ -231,7 +233,7 @@ try:
                 print(f"Total damage: {total_damage:.1f}")
                 print(f"Average damage: {total_damage / strikes:.1f}")
 
-            case "7":
+            case "descend":
                 if not enemies:
                     print("You descend the stairs. But the dungeon is empty.")
                 else:
@@ -245,10 +247,10 @@ try:
                         print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon. Loot: {loot} gold.")
                     print(f"Battle: {len(rounds)} rounds.")
 
-            case "8":
+            case "leaders":
                 print_leaderboard(log)
 
-            case "9":
+            case "shop":
                 print("Shop:")
                 for name, price in prices.items():
                     print(f"{name}: {price} gold")
@@ -279,7 +281,7 @@ try:
                     else:
                         print("No such item in the shop.")
 
-            case "10":
+            case "backpack":
                 if not inventory:
                     print("Backpack is empty.")
                 else:
@@ -287,7 +289,7 @@ try:
                     for name, qty in inventory.items():
                         print(f"{name}: {qty} pcs")
 
-            case "11":
+            case "drink":
                 if inventory.get("potion", 0) == 0:
                     print("No potions in the backpack.")
                 else:
@@ -297,7 +299,7 @@ try:
                         del inventory["potion"]
                     print(f"You drink a potion. Health: {health}. Potions left: {inventory.get('potion', 0)}.")
 
-            case "0":
+            case "exit":
                 print("You climb back toward the light. The dungeon stays behind.")
                 outcome = "exit"
                 running = False
