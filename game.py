@@ -47,6 +47,7 @@ print(f"Критический урон: {crit_damage:.1f}")
 print(f"Запас сил: {stamina}")
 print()
 
+menu_last = 6
 running = True
 actions = 0
 while running:
@@ -59,11 +60,17 @@ while running:
     print("6 - тренировка")
     print("0 - выйти из подземелья")
 
-    valid = ("0", "1", "2", "3", "4", "5", "6")
-    choice = input()
-    while choice not in valid:
-        print("Такого пункта нет. Введи номер пункта из меню.")
+    while True:
         choice = input()
+        try:
+            menu_number = int(choice)
+        except ValueError:
+            print("Такого пункта нет. Введи номер пункта из меню.")
+            continue
+        if 0 <= menu_number <= menu_last:
+            break
+        print("Такого пункта нет. Введи номер пункта из меню.")
+    choice = str(menu_number)
     match choice:
         case "1":
             print("Вы осмотрелись. Комната пуста, только пыль на полу.")
