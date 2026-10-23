@@ -1,18 +1,18 @@
-title = "ПОДЗЕМЕЛЬЕ: ТИХИЙ КОЛОДЕЦ"
+title = "DUNGEON: THE SILENT WELL"
 frame = "=" * 31
 
 print(frame)
 print(title)
 print(frame)
 
-print("Как зовут героя?")
+print("What is the hero's name?")
 hero_name = input()
-print(f"Добро пожаловать, {hero_name}!")
-print("Ты входишь в подземелье. Здесь темно и пахнет сыростью.")
+print(f"Welcome, {hero_name}!")
+print("You enter the dungeon. Dark and damp-smelling.")
 print()
 
-print("Настройка героя.")
-print("Здоровье, сила, ловкость, выносливость — по одному числу в строке:")
+print("Hero setup.")
+print("Health, strength, agility, endurance — one number per line:")
 while True:
     try:
         health = int(input())
@@ -20,133 +20,134 @@ while True:
         agility = int(input())
         endurance = int(input())
     except ValueError:
-        print("Ой: одна из строк не число. Введите все четыре снова:")
+        print("Oops: one of the lines is not a number. Enter all four again:")
         continue
     try:
         if health <= 0:
-            raise ValueError(f"Здоровье должно быть положительным, а введено {health}")
+            raise ValueError(f"Health must be positive, but {health} was entered")
         if strength < 0 or agility < 0 or endurance < 0:
-            raise ValueError("Характеристики не могут быть отрицательными")
+            raise ValueError("Characteristics cannot be negative")
         break
     except ValueError as e:
-        print(f"{e}. Введите все четыре снова:")
+        print(f"{e}. Enter all four again:")
 
 base_attack = 10
 damage = base_attack + strength * 1.5
 crit_damage = damage * 2
 stamina = health // 10 + endurance
 
-print("Характеристики героя:")
-print(f"Здоровье:     {health}")
-print(f"Сила:         {strength}")
-print(f"Ловкость:     {agility}")
-print(f"Выносливость: {endurance}")
+print("Hero characteristics:")
+print(f"Health:    {health}")
+print(f"Strength:  {strength}")
+print(f"Agility:   {agility}")
+print(f"Endurance: {endurance}")
 print()
-print(f"Урон героя: {damage:.1f}")
-print(f"Критический урон: {crit_damage:.1f}")
-print(f"Запас сил: {stamina}")
+print(f"Hero damage: {damage:.1f}")
+print(f"Critical damage: {crit_damage:.1f}")
+print(f"Stamina reserve: {stamina}")
 print()
 
 menu_last = 6
 running = True
 actions = 0
-outcome = "прерывание"
+outcome = "interrupt"
 try:
     while running:
-        print("Что делаешь?")
-        print("1 - осмотреться")
-        print("2 - идти вперёд")
-        print("3 - отдохнуть")
-        print("4 - прислушаться")
-        print("5 - зажечь факел")
-        print("6 - тренировка")
-        print("0 - выйти из подземелья")
+        print("What do you do?")
+        print("1 - look around")
+        print("2 - go forward")
+        print("3 - rest")
+        print("4 - listen")
+        print("5 - light a torch")
+        print("6 - train")
+        print("0 - exit the dungeon")
 
         while True:
             choice = input()
             try:
                 menu_number = int(choice)
             except ValueError:
-                print("Такого пункта нет. Введи номер пункта из меню.")
+                print("No such option. Enter an option number from the menu.")
                 continue
             if 0 <= menu_number <= menu_last:
                 break
-            print("Такого пункта нет. Введи номер пункта из меню.")
+            print("No such option. Enter an option number from the menu.")
         choice = str(menu_number)
+
         match choice:
             case "1":
-                print("Вы осмотрелись. Комната пуста, только пыль на полу.")
+                print("You look around. The room is empty, only dust on the floor.")
 
             case "2":
                 cost = 2
                 if stamina >= cost:
                     stamina -= cost
-                    print("Вы осторожно идёте вперёд. Пол скрипит под ногами.")
+                    print("You go forward carefully. The floor creaks under your feet.")
                 else:
                     health -= cost - stamina
                     stamina = 0
-                    print("Сил больше нет — вы идёте на одном упорстве.")
+                    print("No strength left — you keep going on sheer stubbornness.")
 
             case "3":
                 stamina = stamina + 3
-                print("Вы садитесь на пол и переводите дух. Силы возвращаются.")
+                print("You sit on the floor and catch your breath. Strength returns.")
 
             case "4":
-                print("Вы прислушиваетесь. Где-то далеко капает вода.")
+                print("You listen. Somewhere far away water is dripping.")
 
             case "5":
                 stamina = stamina - 1
-                print("Вы зажигаете факел. На стенах проступают старые надписи.")
+                print("You light a torch. Old inscriptions appear on the walls.")
 
             case "6":
                 strikes = 5
                 total_damage = 0
                 crit_count = 0
-                print("Вы подходите к тренировочному чучелу.")
-                print("Оно стоит здесь с тех пор, как сюда приходил последний искатель.")
+                print("You walk up to the training dummy.")
+                print("It has stood here since the last seeker came by.")
                 print()
-                print(f"Наносите {strikes} ударов.")
+                print(f"You strike {strikes} times.")
                 for i in range(1, strikes + 1):
                     hit_damage = damage
                     if i % 3 == 0:
                         hit_damage = crit_damage
                         crit_count += 1
-                        print(f"Удар {i}: {hit_damage:.1f} — критический!")
+                        print(f"Strike {i}: {hit_damage:.1f} — critical!")
                     else:
-                        print(f"Удар {i}: {hit_damage:.1f}")
+                        print(f"Strike {i}: {hit_damage:.1f}")
                     total_damage += hit_damage
                 stamina = stamina - 1
                 print()
-                print(f"Итог: {strikes} ударов, {crit_count} критический.")
-                print(f"Общий урон: {total_damage:.1f}")
-                print(f"Средний урон: {total_damage / strikes:.1f}")
+                print(f"Total: {strikes} strikes, {crit_count} critical.")
+                print(f"Total damage: {total_damage:.1f}")
+                print(f"Average damage: {total_damage / strikes:.1f}")
 
             case "0":
-                print("Вы поднимаетесь обратно к свету. Подземелье остаётся позади.")
-                outcome = "выход"
+                print("You climb back toward the light. The dungeon stays behind.")
+                outcome = "exit"
                 running = False
 
             case _:
-                print("Такого действия нет.")
+                print("No such action.")
 
         if running:
             actions += 1
             print()
-            print(f"Здоровье: {health} Запас сил: {stamina}")
+            print(f"Health: {health} Stamina: {stamina}")
 
         if health <= 0:
-            print(f"{hero_name} падает без сил. Подземелье забирает ещё одного искателя.")
-            outcome = "гибель"
+            print(f"{hero_name} falls. The dungeon claims another seeker.")
+            outcome = "death"
             running = False
 except KeyboardInterrupt:
     print()
-    print("Игрок прервал сеанс.")
+    print("The player ended the session.")
 finally:
     print(frame)
-    if outcome == "гибель":
-        print(f"Ты не дошёл, {hero_name}. Действий совершено: {actions}.")
-    elif outcome == "выход":
-        print(f"Забег окончен, {hero_name}. Действий совершено: {actions}.")
+    if outcome == "death":
+        print(f"You didn't make it, {hero_name}. Actions taken: {actions}.")
+    elif outcome == "exit":
+        print(f"The run is over, {hero_name}. Actions taken: {actions}.")
     else:
-        print(f"Сеанс прерван, {hero_name}. Действий совершено: {actions}.")
+        print(f"Session interrupted, {hero_name}. Actions taken: {actions}.")
     print(frame)
