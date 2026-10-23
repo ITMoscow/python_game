@@ -64,6 +64,18 @@ ability_bonus = 0
 prices = {"potion": 10, "torch_oil": 15, "war_elixir": 40}
 inventory = {}
 
+MAP = [
+    ["#", "#", "#", "#", "#"],
+    ["#", ".", ".", "#", "#"],
+    ["#", ".", "#", ".", "#"],
+    ["#", ".", ".", ".", "#"],
+    ["#", "#", "S", ".", "#"],
+]
+hero_r, hero_c = 4, 2
+visited = {(4, 2)}
+LOOT = {(1, 1): "old coin", (2, 3): "dusty potion", (3, 3): "guard's gem"}
+found_loot = set()
+
 def hero_hit(strike_n):
     """Урон героя в удар номер strike_n.
     Возвращает пару (hit, crit): урон и признак критического удара.
