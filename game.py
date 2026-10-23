@@ -62,6 +62,38 @@ def hero_hit(strike_n):
     return damage, False
 
 
+def fight(enemy, hero_health):
+    """Бой с enemy до гибели одного из двоих.
+    Печатает строки раундов. Возвращает (rounds, won, hero_health):
+    таблицу раундов, признак победы героя и здоровье после боя.
+    Глобальные переменные не меняет: здоровье приходит параметром
+    и возвращается новым значением.
+    """
+    enemy_hp = 45.0
+    rounds = []
+    round_n = 0
+    print(f"You descend the stairs. A {enemy} emerges from the darkness!")
+    while enemy_hp > 0 and hero_health > 0:
+        round_n += 1
+        hit, crit = hero_hit(round_n)
+        enemy_hp -= hit
+        line = f"Round {round_n}: hero deals {hit:.1f}"
+        if crit:
+            line += " — critical!"
+        else:
+            line += "."
+        if enemy_hp <= 0:
+            line += " Enemy falls."
+            rounds.append([round_n, hit, 0])
+        else:
+            blow = random.randint(2, 6)
+            hero_health -= blow
+            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
+            rounds.append([round_n, hit, blow])
+        print(line)
+    return rounds, enemy_hp <= 0, hero_health
+
+
 menu_last = 8
 running = True
 actions = 0
@@ -143,31 +175,13 @@ try:
                     print("You descend the stairs. But the dungeon is empty.")
                 else:
                     enemy = random.choice(enemies)
-                    enemy_hp = 45
-                    round_n = 0
-                    print(f"You descend the stairs. A {enemy} emerges from the darkness!")
-                    while enemy_hp > 0 and health > 0:
-                        round_n += 1
-                        hit, crit = hero_hit(round_n)
-                        enemy_hp -= hit
-                        line = f"Round {round_n}: hero deals {hit:.1f}"
-                        if crit:
-                            line += " — critical!"
-                        else:
-                            line += "."
-                        if enemy_hp <= 0:
-                            line += " Enemy falls."
-                            log.append([round_n, hit, 0])
-                        else:
-                            blow = random.randint(2, 6)
-                            health -= blow
-                            line += f" {enemy.capitalize()} health: {enemy_hp:.1f}. {enemy.capitalize()} hits for {blow}."
-                            log.append([round_n, hit, blow])
-                        print(line)
-                    if enemy_hp <= 0:
+                    rounds, won, health = fight(enemy, health)
+                    for r in rounds:
+                        log.append(r)
+                    if won:
                         enemies.remove(enemy)
                         print(f"{enemy.capitalize()} defeated! {len(enemies)} enemies left in the dungeon.")
-                    print(f"Battle: {round_n} rounds.")
+                    print(f"Battle: {len(rounds)} rounds.")
 
             case "8":
                 if not log:
