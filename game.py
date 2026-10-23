@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import dungeon
 
@@ -12,59 +13,12 @@ except ImportError:
 title = "DUNGEON: THE SILENT WELL"
 frame = "=" * 31
 
-print(frame)
-print(title)
-print(frame)
-
-print("What is the hero's name?")
-hero_name = input()
-print(f"Welcome, {hero_name}!")
-print("You enter the dungeon. Dark and damp.")
-print()
-
-print("Hero setup.")
-print("Health, strength, agility, endurance — one number per line:")
-while True:
-    try:
-        health = int(input())
-        strength = int(input())
-        agility = int(input())
-        endurance = int(input())
-    except ValueError:
-        print("Oops: one of the lines is not a number. Enter all four again:")
-        continue
-    try:
-        if health <= 0:
-            raise ValueError(f"Health must be positive, but {health} was entered")
-        if strength < 0 or agility < 0 or endurance < 0:
-            raise ValueError("Characteristics cannot be negative")
-        break
-    except ValueError as e:
-        print(f"{e}. Enter all four again:")
-
-base_attack = 10
-damage = base_attack + strength * 1.5
-crit_damage = damage * 2
-stamina = health // 10 + endurance
-max_health = health
-max_stamina = stamina
-
-print("Hero characteristics:")
-print(f"Health:    {health}")
-print(f"Strength:  {strength}")
-print(f"Agility:   {agility}")
-print(f"Endurance: {endurance}")
-print()
-print(f"Hero damage: {damage:.1f}")
-print(f"Critical damage: {crit_damage:.1f}")
-print(f"Stamina reserve: {stamina}")
-print()
-
 enemies = ["ghoul", "skeleton", "spider", "bat"]
 log = []
 gold_total = 0
 ability_bonus = 0
 inventory = {}
+actions = 0
 
 MAP = [
     ["#", "#", "#", "#", "#"],
@@ -78,6 +32,89 @@ visited = {(4, 2)}
 LOOT = {(1, 1): "old coin", (2, 3): "dusty potion", (3, 3): "guard's gem"}
 found_loot = set()
 DIRECTIONS = {"north": (-1, 0), "south": (1, 0), "west": (0, -1), "east": (0, 1)}
+
+print(frame)
+print(title)
+print(frame)
+
+loaded = None
+if os.path.exists("save.json"):
+    print("A save was found. Continue the run? (yes/no)")
+    answer = input().strip().lower()
+    if answer == "yes":
+        try:
+            with open("save.json", encoding="utf-8") as f:
+                loaded = json.load(f)
+        except json.JSONDecodeError:
+            print("The save is damaged. Starting a new run.")
+            loaded = None
+
+if loaded is None:
+    print("What is the hero's name?")
+    hero_name = input()
+    print(f"Welcome, {hero_name}!")
+    print("You enter the dungeon. Dark and damp.")
+    print()
+
+    print("Hero setup.")
+    print("Health, strength, agility, endurance — one number per line:")
+    while True:
+        try:
+            health = int(input())
+            strength = int(input())
+            agility = int(input())
+            endurance = int(input())
+        except ValueError:
+            print("Oops: one of the lines is not a number. Enter all four again:")
+            continue
+        try:
+            if health <= 0:
+                raise ValueError(f"Health must be positive, but {health} was entered")
+            if strength < 0 or agility < 0 or endurance < 0:
+                raise ValueError("Characteristics cannot be negative")
+            break
+        except ValueError as e:
+            print(f"{e}. Enter all four again:")
+
+    base_attack = 10
+    damage = base_attack + strength * 1.5
+    crit_damage = damage * 2
+    stamina = health // 10 + endurance
+    max_health = health
+    max_stamina = stamina
+
+    print("Hero characteristics:")
+    print(f"Health:    {health}")
+    print(f"Strength:  {strength}")
+    print(f"Agility:   {agility}")
+    print(f"Endurance: {endurance}")
+    print()
+    print(f"Hero damage: {damage:.1f}")
+    print(f"Critical damage: {crit_damage:.1f}")
+    print(f"Stamina reserve: {stamina}")
+    print()
+else:
+    hero_name = loaded["hero"]
+    health = loaded["health"]
+    stamina = loaded["stamina"]
+    gold_total = loaded["gold"]
+    actions = loaded["actions"]
+    strength = loaded["strength"]
+    agility = loaded["agility"]
+    endurance = loaded["endurance"]
+    max_health = loaded["max_health"]
+    max_stamina = loaded["max_stamina"]
+    ability_bonus = loaded["bonus"]
+    inventory = loaded["inventory"]
+    log = loaded["log"]
+    enemies = loaded["enemies"]
+    hero_r, hero_c = loaded["position"]
+    visited = {tuple(p) for p in loaded["visited"]}
+    found_loot = set(loaded["loot"])
+    base_attack = 10
+    damage = base_attack + strength * 1.5
+    crit_damage = damage * 2
+    print(f"Run continued: health {health}, gold {gold_total}, enemies left {len(enemies)}.")
 
 def print_leaderboard(log):
     """Печатает топ-3 раундов по урону героя и рекорд врага.
@@ -177,7 +214,6 @@ MENU = ["What do you do? (number or command; help for help)",
         "0 - exit the dungeon (exit)"]
 
 running = True
-actions = 0
 outcome = "interrupt"
 try:
     while running:
